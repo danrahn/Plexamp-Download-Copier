@@ -45,10 +45,10 @@ class PlexampCorrelate:
                 continue
             for item in index['items']:
                 # For file/folder names, don't use the 'fancy' apostrophe
-                artist = item['grandparentTitle'].replace('\u2019', "'")
-                album = item['parentTitle'].replace('\u2019', "'")
-                track = item['title'].replace('\u2019', "'")
-                track_no = item['index']
+                artist = self.keyOrDefault(item, 'grandparentTitle', 'Unknown Artist').replace('\u2019', "'")
+                album = self.keyOrDefault(item, 'parentTitle', 'Unknown Album').replace('\u2019', "'")
+                track = self.keyOrDefault(item, 'title', 'Unknown Track').replace('\u2019', "'")
+                track_no = self.keyOrDefault(item, 'index', 1) # Make all unspecified tracks track 1
                 if artist not in files:
                     files[artist] = {}
                 if album not in files[artist]:
@@ -60,3 +60,9 @@ class PlexampCorrelate:
 
                 files[artist][album]['maxtrack'] = max(files[artist][album]['maxtrack'], track_no)
         return files
+
+    def keyOrDefault(self, item, key, default):
+        if key in item:
+            return item[key]
+        print(f'WARN: Could not find \'{key}\' for the current track, defaulting to \'{default}\'')
+        return default
