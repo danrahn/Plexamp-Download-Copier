@@ -18,14 +18,18 @@ Root\
   ...
 ```
 
+## Requirements
+
+Python 3. If running `python` defaults to Python 2, use `python3` or `py -3` (depending on your platform) to invoke the script instead.
+
 ## Usage
 
 ```
 python plexampDownloadCopier.py [-d dir]
 
-  -d dir - Full path to copy the music to. If not provided, the script will ask for a location.
+  -d dir - Full path to copy the music to. If not provided, the script will ask for a location. If the path does not exist, the script will ask before creating it.
 ```
 
 ## Notes
 
-This script was made with Windows in mind, but technically should work with other OSs. The biggest downside is that this script won't automatically find the Plexamp download folder (on Windows, it's `%LOCALAPPDATA%\Plexamp\Plexamp\Offline`), and will instead interactively ask for its location.
+This script was tested on Windows and Ubuntu, but should work on other platforms. Regardless, the worst that should happen is the script not automatically finding the PlexAmp download directory, in which case it will interactively ask the user to supply that location.
