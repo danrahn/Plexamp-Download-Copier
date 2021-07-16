@@ -1,4 +1,5 @@
 import json
+import platform
 import os
 
 class PlexampCorrelate:
@@ -9,12 +10,18 @@ class PlexampCorrelate:
     def get_app_dir(self):
         if self.appdir != '':
             return self.appdir
-        if 'LOCALAPPDATA' in os.environ:
+        expected = ""
+        system = platform.system().lower()
+        if system == 'windows' and 'LOCALAPPDATA' in os.environ:
             expected = os.path.join(os.environ['LOCALAPPDATA'], 'Plexamp', 'Plexamp', 'Offline')
-            if os.path.exists(expected):
+        elif system == 'darwin' and 'HOME' in os.environ:
+            expected = os.path.join(os.environ['HOME'], 'Library', 'Application Support', 'Plexamp', 'Offline')
+        elif system == 'linux' and 'HOME' in os.environ:
+            expected = os.path.join(os.environ['HOME'], '.local', 'share', 'Plexamp', 'Offline')
+        if len(expected) > 0 and os.path.exists(expected):
                 self.appdir = expected
                 return self.appdir
-        appdir = input('Could not find default PlexAmp download directory (e.g. %LOCALAPPDATA%\\PlexAmp\\PlexAmp\\Offline on Windows). Please enter the full path:\n>')
+        appdir = input('Could not find default PlexAmp download directory. Please enter the full path to the "Offline" folder:\n>')
         while not os.path.exists(appdir):
             appdir = input('That directory does not exist. Please enter the full path: ')
         self.appdir = appdir
