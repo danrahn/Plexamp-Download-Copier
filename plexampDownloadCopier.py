@@ -28,9 +28,10 @@ class PlexampDownloadCopier:
     def copy(self):
         files = self.correlator.correlate()
         for artist in files:
+            artist_escaped = self.replace_invalid_characters(artist) # No need to recalculate this for each album
             for album in files[artist]:
                 maxtrack = files[artist][album]['maxtrack']
-                dst_dir = os.path.join(self.get_savepath(), artist, album)
+                dst_dir = os.path.join(self.get_savepath(), artist_escaped, self.replace_invalid_characters(album))
                 if not os.path.exists(dst_dir):
                     os.makedirs(dst_dir)
                 for src, track in files[artist][album]['tracks'].items():
@@ -53,6 +54,9 @@ class PlexampDownloadCopier:
     
     def replace_invalid_characters(self, filename):
         """ Replaces invalid file name characters (<>:"/\|?*) with sensible alternatives"""
+
+        # Windows has the most restrictions (Linux only disallows '/' and NUL), but apply replacements
+        # regardless of the current system to make things more cross-platform friendly
         filename = re.sub(r'[<>/\\|]', '-', filename) # For most invalid characters, replace with a dash
         filename = filename.replace(':', ' -') # Assume something like 'Song: Title', and change to 'Song - Title'
         filename = filename.replace('"', "'") # Replace double quotes with single quotes
